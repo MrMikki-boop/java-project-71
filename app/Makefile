@@ -13,7 +13,7 @@ build: # Build app
 	./gradlew installDist
 
 lint: # Check code style
-	./gradlew checkstyleMain
+	./gradlew checkstyleMain checkstyleTest
 
 test: # Test code
 	./gradlew test
