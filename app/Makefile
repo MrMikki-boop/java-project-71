@@ -1,6 +1,5 @@
 # Makefile
 .DEFAULT_GOAL := build-run
-.PHONY: build
 
 run-dist: # Run app
 	./build/install/app/bin/app
@@ -22,3 +21,5 @@ last: # Last version plugin
 	./gradlew useLatestVersions
 
 build-run: build run-dist
+
+.PHONY: build
