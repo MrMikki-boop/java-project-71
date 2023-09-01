@@ -6,7 +6,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Setup JDK 20
-        uses: action/setup-java@v2
+        uses: actions/setup-java@v2
         with:
           java-version: 20
           distribution: 'temurin'
