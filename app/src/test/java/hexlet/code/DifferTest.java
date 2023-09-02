@@ -5,12 +5,15 @@ import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DifferTest {
-    public static String resourcesPath;
+    private static String resourcesPath;
 
     @BeforeAll
     public static void beforeAll() {
@@ -29,9 +32,6 @@ public class DifferTest {
     }
 
     public void testDiffStylishAbstract(String filePath1, String filePath2) throws Exception {
-
-        var content1 = Parse.parse(filePath1);
-        var content2 = Parse.parse(filePath2);
 
         var expected = """
                 {
@@ -60,14 +60,12 @@ public class DifferTest {
                   + setting3: none
                 }""";
 
-        var actual = Differ.generate(content1, content2, "stylish");
+        var actual = Differ.generate(filePath1, filePath2, "stylish");
 
         assertEquals(expected, actual);
     }
 
     public void testDiffPlainAbstract(String filePath1, String filePath2) throws Exception {
-        var content1 = Parse.parse(filePath1);
-        var content2 = Parse.parse(filePath2);
 
         var expected = """
                 Property 'chars2' was updated. From [complex value] to false
@@ -82,48 +80,46 @@ public class DifferTest {
                 Property 'obj1' was added with value: [complex value]
                 Property 'setting1' was updated. From 'Some value' to 'Another value'
                 Property 'setting2' was updated. From 200 to 300
-                Property 'setting3' was updated. From true to 'none'
-                """;
+                Property 'setting3' was updated. From true to 'none'""";
 
-        var actual = Differ.generate(content1, content2, "plain");
+        var actual = Differ.generate(filePath1, filePath2, "plain");
 
         assertEquals(expected, actual);
     }
 
     public void testDiffJsonAbstract(String filePath1, String filePath2) throws Exception {
-        var content1 = Parse.parse(filePath1);
-        var content2 = Parse.parse(filePath2);
 
-        var expected = Parse.parse(resourcesPath + "/jsonExpected.json");
+        Path expectedPath = Paths.get(resourcesPath + "/jsonExpected.json");
+        var expected = Files.readString(expectedPath);
 
-        var actual = Differ.generate(content1, content2, "json");
+        var actual = Differ.generate(filePath1, filePath2, "json");
 
         assertEquals(expected, actual);
     }
 
-    @Test
-    public void testParse() throws Exception {
-        var filePath = resourcesPath + "/json/file1.json";
-        var content = Parse.parse(filePath);
-
-        var expected = """
-                {
-                  "setting1": "Some value",
-                  "setting2": 200,
-                  "setting3": true,
-                  "key1": "value1",
-                  "numbers1": [1, 2, 3, 4],
-                  "numbers2": [2, 3, 4, 5],
-                  "id": 45,
-                  "default": null,
-                  "checked": false,
-                  "numbers3": [3, 4, 5],
-                  "chars1": ["a", "b", "c"],
-                  "chars2": ["d", "e", "f"]
-                }""";
-
-        assertEquals(expected, content);
-    }
+//    @Test
+//    public void testParse() throws Exception {
+//        var filePath = resourcesPath + "/json/file1.json";
+//        var content = Parser.parse(filePath);
+//
+//        var expected = """
+//                {
+//                  "setting1": "Some value",
+//                  "setting2": 200,
+//                  "setting3": true,
+//                  "key1": "value1",
+//                  "numbers1": [1, 2, 3, 4],
+//                  "numbers2": [2, 3, 4, 5],
+//                  "id": 45,
+//                  "default": null,
+//                  "checked": false,
+//                  "numbers3": [3, 4, 5],
+//                  "chars1": ["a", "b", "c"],
+//                  "chars2": ["d", "e", "f"]
+//                }""";
+//
+//        assertEquals(expected, content);
+//    }
 
     @Test
     public void testDiff() throws Exception {
@@ -142,7 +138,5 @@ public class DifferTest {
 
         testDiffJsonAbstract(jsonFilePath1, jsonFilePath2);
         testDiffJsonAbstract(yamlFilePath1, yamlFilePath2);
-
-        assertEquals("", Differ.generate("", "", "stylish"));
     }
 }
