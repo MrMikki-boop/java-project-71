@@ -23,7 +23,9 @@ public class Differ {
             case "yml", "yaml" -> {
                 objectMapper = new YAMLMapper();
             }
-            default -> throw new Exception("Unknown extension");
+            default -> {
+                throw new Exception("Unknown extension");
+            }
         }
 
         File file = new File(filePath);
