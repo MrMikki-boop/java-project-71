@@ -11,11 +11,14 @@ build: # Build app
 	./gradlew clean
 	./gradlew installDist
 
-lint: # Check code style
-	./gradlew checkstyleMain checkstyleTest
+report:
+		./gradlew jacocoTestReport
 
-test: # Test code
-	./gradlew test
+lint:
+		./gradlew checkstyleMain checkstyleTest
+
+test:
+		./gradlew test
 
 last: # Last version plugin
 	./gradlew useLatestVersions
