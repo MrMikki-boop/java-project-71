@@ -11,8 +11,8 @@ import java.util.concurrent.Callable;
         description = "Compares two configuration files and shows a difference.")
 public class App implements Callable<Integer> {
 
-    @Option(names = {"-f", "--format"}, description = "output format [default: stylish]")
-    private String format = "stylish";
+    @Option(names = {"-f", "--format"}, defaultValue = "stylish", description = "output format [default: ${DEFAULT-VALUE}]")
+    private String format;
 
     @Parameters(index = "0", description = "descr1")
     private String filePath1;
@@ -23,10 +23,10 @@ public class App implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
 
-        var text1 = Parse.parse("src/test/resources/" + filePath1);
-        var text2 = Parse.parse("src/test/resources/" + filePath2);
+        var text1 = Parse.parse(filePath1);
+        var text2 = Parse.parse(filePath2);
 
-        var diff = Differ.differ(text1, text2);
+        var diff = Differ.generate(text1, text2, format);
 
         System.out.println(diff);
 
