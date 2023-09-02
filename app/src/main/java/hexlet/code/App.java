@@ -11,10 +11,11 @@ import java.util.concurrent.Callable;
         description = "Compares two configuration files and shows a difference.")
 public class App implements Callable<Integer> {
 
-    private final int SUCCESS_EXIT_CODE = 0;
-    private final int ERROR_EXIT_CODE = 1;
+    private static final int SUCCESS_EXIT_CODE = 0;
+    private static final int ERROR_EXIT_CODE = 1;
 
-    @Option(names = {"-f", "--format"}, defaultValue = "stylish", description = "output format [default: ${DEFAULT-VALUE}]")
+    @Option(names = {"-f", "--format"}, defaultValue = "stylish",
+            description = "output format [default: ${DEFAULT-VALUE}]")
     private String format;
 
     @Parameters(index = "0", description = "path to first file")
@@ -24,7 +25,7 @@ public class App implements Callable<Integer> {
     private String filePath2;
 
     @Override
-    public Integer call() {
+    public Integer call() throws Exception {
         try {
             var diff = Differ.generate(filePath1, filePath2, format);
             System.out.println(diff);
