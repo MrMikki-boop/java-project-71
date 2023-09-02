@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 
-public class PlainFormatter {
+public class Plain {
     public static String plainFormatter(TreeMap<String, HashMap<String, String>> diff) {
 
         StringBuilder builder = new StringBuilder();
@@ -16,19 +16,21 @@ public class PlainFormatter {
             if (changes.containsKey("-") && changes.containsKey("+")) {
                 var oldValue = toPrettyString(changes.get("-"));
                 var newValue = toPrettyString(changes.get("+"));
-                var changeLog = String.format("Property '%s' was updated. From %s to %s\n",
+                var changeLog = String.format("Property '%s' was updated. From %s to %s",
                         field, oldValue, newValue);
                 builder.append(changeLog);
+            } else if (changes.containsKey("-")) {
+                builder.append(String.format("Property '%s' was removed", field));
+            } else if (changes.containsKey("+")) {
+                var value = toPrettyString(changes.get("+"));
+                builder.append(String.format("Property '%s' was added with value: %s", field, value));
+            } else {
                 continue;
             }
 
-            if (changes.containsKey("-")) {
-                builder.append(String.format("Property '%s' was removed\n", field));
-            } else if (changes.containsKey("+")) {
-                var value = toPrettyString(changes.get("+"));
-                builder.append(String.format("Property '%s' was added with value: %s\n", field, value));
+            if (!field.equals(diff.lastKey())) {
+                builder.append("\n");
             }
-
         }
 
         return builder.toString().replace("\"", "");
@@ -40,7 +42,6 @@ public class PlainFormatter {
             return "[complex value]";
         }
 
-//        if (json.equals("true") || json.equals("false") || json.equals("null")) {
         if (List.of("true", "false", "null").contains(json)) {
             return json;
         }
