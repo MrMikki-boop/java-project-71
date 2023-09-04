@@ -1,47 +1,44 @@
 package hexlet.code;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class Tree {
 
-    public static TreeMap<String, HashMap<String, String>> build(JsonNode node1, JsonNode node2) {
+    public static <T extends Map<String, String>> Map build(T map1, T map2) {
 
         TreeSet<String> fields = new TreeSet<>();
+        fields.addAll(map1.keySet());
+        fields.addAll(map2.keySet());
 
-        Iterator<String> it1 = node1.fieldNames();
-        while (it1.hasNext()) {
-            fields.add(it1.next());
-        }
-        Iterator<String> it2 = node2.fieldNames();
-        while (it2.hasNext()) {
-            fields.add(it2.next());
-        }
+        TreeMap<String, LinkedHashMap<String, String>> result = new TreeMap<>();
 
-        TreeMap<String, HashMap<String, String>> result = new TreeMap<>();
         for (var field : fields) {
 
-            HashMap<String, String> changes = new HashMap<>();
-            result.put(field, changes);
+            LinkedHashMap<String, String> metaData = new LinkedHashMap<>();
 
-            if (!node1.has(field)) {
-                result.get(field).put("+", node2.get(field).toString());
-            } else if (!node2.has(field)) {
-                result.get(field).put("-", node1.get(field).toString());
+            if (!map1.containsKey(field)) {
+                metaData.put("type", "added");
+                metaData.put("value", map2.get(field));
+            } else if (!map2.containsKey(field)) {
+                metaData.put("type", "deleted");
+                metaData.put("value", map1.get(field));
             } else {
-                var value1 = node1.get(field).toString();
-                var value2 = node2.get(field).toString();
-                if (value1.equals(value2)) {
-                    result.get(field).put("=", value2);
+                var oldValue = map1.get(field);
+                var newValue = map2.get(field);
+
+                if (!oldValue.equals(newValue)) {
+                    metaData.put("type", "changed");
+                    metaData.put("value1", oldValue);
+                    metaData.put("value2", newValue);
                 } else {
-                    result.get(field).put("-", value1);
-                    result.get(field).put("+", value2);
+                    metaData.put("type", "unchanged");
+                    metaData.put("value", newValue);
                 }
             }
+            result.put(field, metaData);
         }
 
         return result;

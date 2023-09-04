@@ -1,44 +1,50 @@
 package hexlet.code.formatters;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.TreeMap;
+import java.util.Map;
 
 public class Plain {
-    public static String plainFormatter(TreeMap<String, HashMap<String, String>> diff) {
+    public static String render(Map<String, Map<String, String>> diff) {
 
-        StringBuilder builder = new StringBuilder();
+        var builder = new StringBuilder();
 
         for (var field : diff.keySet()) {
 
-            var changes = diff.get(field);
+            var metaData = diff.get(field);
+            var type = metaData.get("type");
+            switch (type) {
+                case "added" -> {
+                    var value = toPrettyString(metaData.get("value"));
+                    builder.append(String.format("Property '%s' was added with value: %s", field, value));
+                }
 
-            if (changes.containsKey("-") && changes.containsKey("+")) {
-                var oldValue = toPrettyString(changes.get("-"));
-                var newValue = toPrettyString(changes.get("+"));
-                var changeLog = String.format("Property '%s' was updated. From %s to %s",
-                        field, oldValue, newValue);
-                builder.append(changeLog);
-            } else if (changes.containsKey("-")) {
-                builder.append(String.format("Property '%s' was removed", field));
-            } else if (changes.containsKey("+")) {
-                var value = toPrettyString(changes.get("+"));
-                builder.append(String.format("Property '%s' was added with value: %s", field, value));
-            } else {
-                continue;
+                case "deleted" -> builder.append(String.format("Property '%s' was removed", field));
+
+                case "changed" -> {
+                    var oldValue = toPrettyString(metaData.get("value1"));
+                    var newValue = toPrettyString(metaData.get("value2"));
+                    var changeLog = String.format("Property '%s' was updated. From %s to %s",
+                            field, oldValue, newValue);
+                    builder.append(changeLog);
+                }
+                default -> {
+                    continue;
+                }
             }
 
-            if (!field.equals(diff.lastKey())) {
-                builder.append("\n");
-            }
+            builder.append("\n");
         }
 
-        return builder.toString().replace("\"", "");
+        var trailingNewLineIndex = builder.lastIndexOf("\n");
+        builder.replace(trailingNewLineIndex, builder.length(), "");
+
+        return builder.toString();
     }
 
     private static String toPrettyString(String json) {
-        if ((json.startsWith("[") && json.endsWith("]"))
-                || (json.startsWith("{") && json.endsWith("}"))) {
+        var isArray = json.startsWith("[") && json.endsWith("]");
+        var isObject = json.startsWith("{") && json.endsWith("}");
+        if (isArray || isObject) {
             return "[complex value]";
         }
 
