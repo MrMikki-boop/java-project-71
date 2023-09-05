@@ -7,36 +7,28 @@ import picocli.CommandLine.Option;
 
 import java.util.concurrent.Callable;
 
-@Command(name = "gendiff", mixinStandardHelpOptions = true, version = "gendiff 1.0",
+@Command(name = "gendiff", mixinStandardHelpOptions = true, version = "checksum 1.0",
         description = "Compares two configuration files and shows a difference.")
-public class App implements Callable<Integer> {
+class App implements Callable<Integer> {
 
-    private static final int SUCCESS_EXIT_CODE = 0;
-    private static final int ERROR_EXIT_CODE = 1;
+    @Parameters(index = "0", description = "path to first file", paramLabel = "filepath1")
+    private String filepath1;
+    @Parameters(index = "1", description = "path to second file", paramLabel = "filepath2")
+    private String filepath2;
 
     @Option(names = {"-f", "--format"}, defaultValue = "stylish",
-            description = "output format [default: ${DEFAULT-VALUE}]")
+            description = "output format [default: ${DEFAULT-VALUE}]", paramLabel = "format")
     private String format;
 
-    @Parameters(index = "0", description = "path to first file")
-    private String filePath1;
-
-    @Parameters(index = "1", description = "path to second file")
-    private String filePath2;
-
-    @Override
-    public final Integer call() throws Exception {
-        try {
-            var diff = Differ.generate(filePath1, filePath2, format);
-            System.out.println(diff);
-            return SUCCESS_EXIT_CODE;
-        } catch (Exception e) {
-            return ERROR_EXIT_CODE;
-        }
+    public static void main(String[] args) {
+        int exitCode = new CommandLine(new App()).execute(args);
+        System.exit(exitCode);
     }
 
-    public static void main(String... args) {
-        var exitCode = new CommandLine(new App()).execute(args);
-        System.exit(exitCode);
+    @Override
+    public Integer call() throws Exception {
+        System.out.println(Differ.generate("src/test/resources/" + filepath1,
+                "src/test/resources/" + filepath2, format));
+        return 0;
     }
 }

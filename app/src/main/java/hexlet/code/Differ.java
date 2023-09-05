@@ -1,42 +1,27 @@
 package hexlet.code;
 
-import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
 
 public class Differ {
+    public static String generate(String filepath1, String filepath2, String format) throws Exception {
+        Path absPath1 = Paths.get(filepath1).toAbsolutePath().normalize();
+        Path absPath2 = Paths.get(filepath2).toAbsolutePath().normalize();
+        String content1 = Files.readString(absPath1);
+        String content2 = Files.readString(absPath2);
 
-    private static String getFileFormat(File file) {
-        var filePath = file.getPath();
-        if (!filePath.contains(".")) {
-            return "";
-        }
-        var lastIndexOfDot = filePath.lastIndexOf(".") + 1;
-        var format = filePath.substring(lastIndexOfDot);
+        Map<String, Object> mapA = Parser.makeParsing(filepath1, content1);
+        Map<String, Object> mapB = Parser.makeParsing(filepath2, content2);
 
-        return format.toLowerCase();
+        List<Map<String, Object>> difference = Tree.makeDifference(mapA, mapB);
+        return Formatter.chooseFormat(difference, format);
     }
 
-    private static Map getData(String filePath) throws Exception {
-
-        var file = new File(filePath);
-        var data = Files.readString(file.toPath());
-
-        var format = getFileFormat(file);
-        return Parser.parse(data, format);
-    }
-
-    public static String generate(String filePath1, String filePath2) throws Exception {
-        return generate(filePath1, filePath2, "stylish");
-    }
-
-    public static String generate(String filePath1, String filePath2, String formatName) throws Exception {
-
-        var map1 = getData(filePath1);
-        var map2 = getData(filePath2);
-
-        var diff = Tree.build(map1, map2);
-
-        return Formatter.render(diff, formatName);
+    public static String generate(String filepath1, String filepath2) throws Exception {
+        String format = "stylish";
+        return generate(filepath1, filepath2, format);
     }
 }

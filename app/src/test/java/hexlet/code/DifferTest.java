@@ -1,93 +1,53 @@
 package hexlet.code;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
-
-import java.io.File;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+class DifferTest {
+    private static String resultStylish;
+    private static String resultPlain;
+    private static String resultJson;
 
-public class DifferTest {
-    private static String resourcesPath;
-    private static String jsonFilePath1;
-    private static String jsonFilePath2;
-    private static String yamlFilePath1;
-    private static String yamlFilePath2;
+    private static Path getFixturePath(String fileName) {
+        return Paths.get("src", "test", "resources", fileName)
+                .toAbsolutePath().normalize();
+    }
+
+    private static String getFixtureContent(String fileName) throws Exception {
+        Path filePath = getFixturePath(fileName);
+        return Files.readString(filePath).trim().replaceAll("\r", "");
+    }
 
     @BeforeAll
-    public static void beforeAll() {
-        resourcesPath = new File("src/test/resources").getAbsolutePath();
-
-        jsonFilePath1 = resourcesPath + "/fixtures/json/file1.json";
-        jsonFilePath2 = resourcesPath + "/fixtures/json/file2.json";
-
-        yamlFilePath1 = resourcesPath + "/fixtures/yml/file1.yml";
-        yamlFilePath2 = resourcesPath + "/fixtures/yml/file2.yml";
+    public static void beforeAll() throws Exception {
+        resultStylish = getFixtureContent("fixtures/expectedStylish");
+        resultPlain = getFixtureContent("fixtures/expectedPlain");
+        resultJson = getFixtureContent("fixtures/jsonExpected.json");
     }
 
-    @Test
-    public void testDefaultValue() {
-        assertDoesNotThrow(() -> {
-            new CommandLine(new App()).execute(jsonFilePath1, jsonFilePath2);
-        });
-    }
+    @ParameterizedTest
+    @ValueSource(strings = {"json", "yml"})
+    public void generateTest(String format) throws Exception {
+        String filePath1 = getFixturePath("file1." + format).toString();
+        String filePath2 = getFixturePath("file2." + format).toString();
 
-    private void testStylishAbstract(String filePath1, String filePath2) throws Exception {
-        var path = Paths.get(resourcesPath + "/fixtures/expectedStylish");
-        var expected = Files.readString(path);
-        var actual = Differ.generate(filePath1, filePath2, "stylish");
-
-        assertEquals(expected, actual);
-    }
-
-    private void testPlainAbstract(String filePath1, String filePath2) throws Exception {
-        var path = Paths.get(resourcesPath + "/fixtures/expectedPlain");
-        var expected = Files.readString(path);
-        var actual = Differ.generate(filePath1, filePath2, "plain");
-
-        assertEquals(expected, actual);
-    }
-
-    private void testJsonAbstract(String filePath1, String filePath2) throws Exception {
-        Path expectedPath = Paths.get(resourcesPath + "/fixtures/expectedJson.json");
-        var expected = Files.readString(expectedPath);
-        var actual = Differ.generate(filePath1, filePath2, "json");
-
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void testJsonStylish() throws Exception {
-        testStylishAbstract(jsonFilePath1, jsonFilePath2);
-    }
-
-    @Test
-    public void testYamlStylish() throws Exception {
-        testStylishAbstract(yamlFilePath1, yamlFilePath2);
-    }
-
-    @Test
-    public void testJsonPlain() throws Exception {
-        testPlainAbstract(jsonFilePath1, jsonFilePath2);
-    }
-
-    @Test
-    public void testYamlPlain() throws Exception {
-        testPlainAbstract(yamlFilePath1, yamlFilePath2);
-    }
-
-    @Test
-    public void testJsonJson() throws Exception {
-        testJsonAbstract(jsonFilePath1, jsonFilePath2);
-    }
-
-    @Test
-    public void testYamlJson() throws Exception {
-        testJsonAbstract(yamlFilePath1, yamlFilePath2);
+        // Json and Yaml to stylish as default
+        assertThat(Differ.generate(filePath1, filePath2))
+                .isEqualTo(resultStylish);
+        // Json and Yaml to stylish
+        assertThat(Differ.generate(filePath1, filePath2, "stylish"))
+                .isEqualTo(resultStylish);
+        // Json and Yaml to plain
+        assertThat(Differ.generate(filePath1, filePath2, "plain"))
+                .isEqualTo(resultPlain);
+        // Json and Yaml to json
+        assertThat(Differ.generate(filePath1, filePath2, "json"))
+                .isEqualTo(resultJson);
     }
 }
+

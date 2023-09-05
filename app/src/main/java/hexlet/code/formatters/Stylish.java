@@ -1,55 +1,44 @@
 package hexlet.code.formatters;
 
+import java.util.List;
 import java.util.Map;
 
 public class Stylish {
-    public static String render(Map<String, Map<String, String>> diff) {
-        var builder = new StringBuilder("{\n");
+    public static String makeStylish(List<Map<String, Object>> difference) {
 
-        for (var field: diff.keySet()) {
-            var metaData = diff.get(field);
-
-            var type = metaData.get("type");
-            switch (type) {
-                case "added" -> {
-                    var value = toPrettyString(metaData.get("value"));
-                    var changeLog = String.format("  %s %s: %s\n", "+", field, value);
-                    builder.append(changeLog);
-                }
-
-                case "deleted" -> {
-                    var value = toPrettyString(metaData.get("value"));
-                    var changeLog = String.format("  %s %s: %s\n", "-", field, value);
-                    builder.append(changeLog);
-                }
-
-                case "changed" -> {
-                    var oldValue = toPrettyString(metaData.get("value1"));
-                    var newValue = toPrettyString(metaData.get("value2"));
-                    var changeLog1 = String.format("  %s %s: %s\n", "-", field, oldValue);
-                    var changeLog2 = String.format("  %s %s: %s\n", "+", field, newValue);
-                    builder.append(changeLog1);
-                    builder.append(changeLog2);
-                }
-                case "unchanged" -> {
-                    var value = toPrettyString(metaData.get("value"));
-                    var changeLog = String.format("  %s %s: %s\n", " ", field, value);
-                    builder.append(changeLog);
-                }
-                default -> throw new RuntimeException();
+        StringBuilder result = new StringBuilder();
+        result.append("{");
+        for (Map<String, Object> element : difference) {
+            result.append("\n").append("  ");
+            if (element.get("status").equals("deleted")) {
+                result.append("- ")
+                        .append(element.get("key"))
+                        .append(": ")
+                        .append(element.get("oldValue"));
+            } else if (element.get("status").equals("added")) {
+                result.append("+ ")
+                        .append(element.get("key"))
+                        .append(": ")
+                        .append(element.get("newValue"));
+            } else if (element.get("status").equals("unchanged")) {
+                result.append("  ")
+                        .append(element.get("key"))
+                        .append(": ")
+                        .append(element.get("oldValue"));
+            } else if (element.get("status").equals("changed")) {
+                result.append("- ")
+                        .append(element.get("key"))
+                        .append(": ")
+                        .append(element.get("oldValue"))
+                        .append("\n");
+                result.append("  ")
+                        .append("+ ")
+                        .append(element.get("key"))
+                        .append(": ")
+                        .append(element.get("newValue"));
             }
         }
-
-        builder.append("}");
-
-        return builder.toString();
-    }
-
-    private static String toPrettyString(String text) {
-        var prettyText = text;
-        if (prettyText.startsWith("{")) {
-            prettyText = prettyText.replace(":", "=");
-        }
-        return prettyText;
+        result.append("\n}");
+        return result.toString().trim();
     }
 }

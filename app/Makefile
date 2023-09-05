@@ -1,11 +1,7 @@
 # Makefile
 .DEFAULT_GOAL := build-run
 
-run-dist: # Run app
-	./build/install/app/bin/app
 
-run:
-	./gradlew run
 
 build: # Build app
 	./gradlew clean
@@ -14,11 +10,17 @@ build: # Build app
 report:
 		./gradlew jacocoTestReport
 
-lint:
-		./gradlew checkstyleMain checkstyleTest
+run-dist: # Run app
+		./build/install/app/bin/app
+
+run:
+	./gradlew run
 
 test:
 		./gradlew test
+
+lint:
+	@./gradlew checkstyleMain checkstyleTest
 
 last: # Last version plugin
 	./gradlew useLatestVersions

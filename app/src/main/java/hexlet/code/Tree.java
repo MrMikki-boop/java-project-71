@@ -1,46 +1,46 @@
 package hexlet.code;
 
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Set;
 import java.util.TreeSet;
+import java.util.Objects;
 
 public class Tree {
+    public static List<Map<String, Object>> makeDifference(Map<String, Object> mapA, Map<String, Object> mapB) {
+        List<Map<String, Object>> list = new ArrayList<>();
 
-    public static <T extends Map<String, String>> Map build(T map1, T map2) {
+        Set<String> keys = new TreeSet<>();
+        keys.addAll(mapA.keySet());
+        keys.addAll(mapB.keySet());
 
-        TreeSet<String> fields = new TreeSet<>();
-        fields.addAll(map1.keySet());
-        fields.addAll(map2.keySet());
+        for (String key : keys) {
+            Map<String, Object> diffMap = new TreeMap<>();
+            var valueA = mapA.get(key);
+            var valueB = mapB.get(key);
 
-        TreeMap<String, LinkedHashMap<String, String>> result = new TreeMap<>();
-
-        for (var field : fields) {
-
-            LinkedHashMap<String, String> metaData = new LinkedHashMap<>();
-
-            if (!map1.containsKey(field)) {
-                metaData.put("type", "added");
-                metaData.put("value", map2.get(field));
-            } else if (!map2.containsKey(field)) {
-                metaData.put("type", "deleted");
-                metaData.put("value", map1.get(field));
-            } else {
-                var oldValue = map1.get(field);
-                var newValue = map2.get(field);
-
-                if (!oldValue.equals(newValue)) {
-                    metaData.put("type", "changed");
-                    metaData.put("value1", oldValue);
-                    metaData.put("value2", newValue);
-                } else {
-                    metaData.put("type", "unchanged");
-                    metaData.put("value", newValue);
-                }
+            if (mapA.containsKey(key) && !mapB.containsKey(key)) {
+                diffMap.put("key", key);
+                diffMap.put("status", "deleted");
+                diffMap.put("oldValue", valueA);
+            } else if (!mapA.containsKey(key) && mapB.containsKey(key)) {
+                diffMap.put("key", key);
+                diffMap.put("status", "added");
+                diffMap.put("newValue", valueB);
+            } else if (mapA.containsKey(key) && mapB.containsKey(key) && Objects.equals(valueA, valueB)) {
+                diffMap.put("key", key);
+                diffMap.put("status", "unchanged");
+                diffMap.put("oldValue", valueA);
+            } else if (mapA.containsKey(key) && mapB.containsKey(key) && !Objects.equals(valueA, valueB)) {
+                diffMap.put("key", key);
+                diffMap.put("status", "changed");
+                diffMap.put("oldValue", valueA);
+                diffMap.put("newValue", valueB);
             }
-            result.put(field, metaData);
+            list.add(diffMap);
         }
-
-        return result;
+        return list;
     }
 }

@@ -4,60 +4,46 @@ import java.util.List;
 import java.util.Map;
 
 public class Plain {
-    public static String render(Map<String, Map<String, String>> diff) {
+    public static String makePlain(List<Map<String, Object>> difference) {
 
-        var builder = new StringBuilder();
+        StringBuilder result = new StringBuilder();
+        String newLine = System.lineSeparator(); // Получение символа новой строки
 
-        for (var field : diff.keySet()) {
-
-            var metaData = diff.get(field);
-            var type = metaData.get("type");
-            switch (type) {
-                case "added" -> {
-                    var value = toPrettyString(metaData.get("value"));
-                    builder.append(String.format("Property '%s' was added with value: %s", field, value));
-                }
-
-                case "deleted" -> builder.append(String.format("Property '%s' was removed", field));
-
-                case "changed" -> {
-                    var oldValue = toPrettyString(metaData.get("value1"));
-                    var newValue = toPrettyString(metaData.get("value2"));
-                    var changeLog = String.format("Property '%s' was updated. From %s to %s",
-                            field, oldValue, newValue);
-                    builder.append(changeLog);
-                }
-                default -> {
-                    continue;
-                }
+        for (Map<String, Object> element : difference) {
+            if (element.get("status").equals("deleted")) {
+                result.append("Property '")
+                        .append(element.get("key"))
+                        .append("' was removed")
+                        .append(newLine);
+            } else if (element.get("status").equals("added")) {
+                result.append("Property '")
+                        .append(element.get("key"))
+                        .append("' was added with value: ")
+                        .append(checkValue(element.get("newValue")))
+                        .append(newLine);
+            } else if (element.get("status").equals("changed")) {
+                result.append("Property '")
+                        .append(element.get("key"))
+                        .append("' was updated. From ")
+                        .append(checkValue(element.get("oldValue")))
+                        .append(" to ")
+                        .append(checkValue(element.get("newValue")))
+                        .append(newLine);
             }
-
-            builder.append("\n");
         }
-
-        var trailingNewLineIndex = builder.lastIndexOf("\n");
-        builder.replace(trailingNewLineIndex, builder.length(), "");
-
-        return builder.toString();
+        return result.toString().trim();
     }
 
-    private static String toPrettyString(String json) {
-        var isArray = json.startsWith("[") && json.endsWith("]");
-        var isObject = json.startsWith("{") && json.endsWith("}");
-        if (isArray || isObject) {
+    public static String checkValue(Object value) {
+        if (value instanceof Map || value instanceof List) {
             return "[complex value]";
+        } else if (value == null) {
+            return "null";
+        } else if (value instanceof String) {
+            return "'" + value + "'";
+        } else {
+            return value.toString();
         }
-
-        if (List.of("true", "false", "null").contains(json)) {
-            return json;
-        }
-
-        try {
-            Double.parseDouble(json);
-        } catch (NumberFormatException nfe) {
-            return "'" + json + "'";
-        }
-
-        return json;
     }
 }
+
