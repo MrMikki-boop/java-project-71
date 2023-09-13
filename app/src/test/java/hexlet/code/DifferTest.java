@@ -14,7 +14,7 @@ class DifferTest {
     private static String resultJson;
 
     private static Path getFixturePath(String fileName) {
-        return Paths.get("src", "test", "resources", fileName)
+        return Paths.get("src", "test", "resources", "fixtures", fileName)
                 .toAbsolutePath().normalize();
     }
 
@@ -25,9 +25,9 @@ class DifferTest {
 
     @BeforeAll
     public static void beforeAll() throws Exception {
-        resultStylish = getFixtureContent("fixtures/expectedStylish");
-        resultPlain = getFixtureContent("fixtures/expectedPlain");
-        resultJson = getFixtureContent("fixtures/jsonExpected.json");
+        resultStylish = getFixtureContent("expectedStylish");
+        resultPlain = getFixtureContent("expectedPlain");
+        resultJson = getFixtureContent("jsonExpected.json");
     }
 
     @ParameterizedTest
