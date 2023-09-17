@@ -11,7 +11,6 @@ It's a primitive application that compares two *flat* jsons and returns their di
 
 #### Example of Help Output (Project Step 4):
 [![asciicast](https://asciinema.org/a/608481.svg)](https://asciinema.org/a/608481)
-[![demo](https://asciinema.org/a/608481.svg)](https://asciinema.org/a/608481)
 
 #### Example of Comparing JSON Files (Project Step 5):
 [![asciicast](https://asciinema.org/a/608484.svg)](https://asciinema.org/a/608484)
