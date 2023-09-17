@@ -2,38 +2,47 @@ package hexlet.code.formatters;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class Stylish {
     public static String makeStylish(List<Map<String, Object>> difference) {
-        return "{" + System.lineSeparator() +
-                difference.stream()
-                        .map(Stylish::formatElement)
-                        .collect(Collectors.joining(System.lineSeparator())) +
-                System.lineSeparator() + "}";
-    }
 
-    private static String formatElement(Map<String, Object> element) {
-        String key = (String) element.get("key");
-        String status = (String) element.get("status");
-        String oldValue = formatValue(element.get("oldValue"));
-        String newValue = formatValue(element.get("newValue"));
+        StringBuilder result = new StringBuilder();
+        result.append("{").append(System.lineSeparator());
+        boolean isFirst = true;
 
-        return switch (status) {
-            case "deleted" -> "  - " + key + ": " + oldValue;
-            case "added" -> "  + " + key + ": " + newValue;
-            case "unchanged" -> "    " + key + ": " + oldValue;
-            case "changed" -> "  - " + key + ": " + oldValue + System.lineSeparator() +
-                    "  + " + key + ": " + newValue;
-            default -> throw new IllegalArgumentException("Unknown status: " + status);
-        };
-    }
-
-    private static String formatValue(Object value) {
-        if (value == null) {
-            return "null";
-        } else {
-            return value.toString();
+        for (Map<String, Object> element : difference) {
+            if (!isFirst) {
+                result.append(System.lineSeparator());
+            }
+            if (element.get("status").equals("deleted")) {
+                result.append("  - ")
+                        .append(element.get("key"))
+                        .append(": ")
+                        .append(element.get("oldValue"));
+            } else if (element.get("status").equals("added")) {
+                result.append("  + ")
+                        .append(element.get("key"))
+                        .append(": ")
+                        .append(element.get("newValue"));
+            } else if (element.get("status").equals("unchanged")) {
+                result.append("    ")
+                        .append(element.get("key"))
+                        .append(": ")
+                        .append(element.get("oldValue"));
+            } else if (element.get("status").equals("changed")) {
+                result.append("  - ")
+                        .append(element.get("key"))
+                        .append(": ")
+                        .append(element.get("oldValue"));
+                result.append(System.lineSeparator());
+                result.append("  + ")
+                        .append(element.get("key"))
+                        .append(": ")
+                        .append(element.get("newValue"));
+            }
+            isFirst = false;
         }
+        result.append(System.lineSeparator()).append("}");
+        return result.toString();
     }
 }
