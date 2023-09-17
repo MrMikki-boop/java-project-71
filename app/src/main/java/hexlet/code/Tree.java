@@ -21,7 +21,8 @@ public class Tree {
         return list;
     }
 
-    private static Map<String, Object> getDifferenceMap(String key, Map<String, Object> mapA, Map<String, Object> mapB) {
+    private static Map<String, Object> getDifferenceMap(String key,
+                                                        Map<String, Object> mapA, Map<String, Object> mapB) {
         Map<String, Object> diffMap = new HashMap<>();
         var valueA = mapA.get(key);
         var valueB = mapB.get(key);
