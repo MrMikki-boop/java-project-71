@@ -37,16 +37,16 @@ class DifferTest {
         String filePath2 = getFixturePath("file2." + format).toString();
 
         // Json and Yaml to stylish as default
-        assertThat(Differ.generate1(filePath1, filePath2))
+        assertThat(Differ.generate(filePath1, filePath2))
                 .isEqualTo(resultStylish);
         // Json and Yaml to stylish
-        assertThat(Differ.generate1(filePath1, filePath2, "stylish"))
+        assertThat(Differ.generate(filePath1, filePath2, "stylish"))
                 .isEqualTo(resultStylish);
         // Json and Yaml to plain
-        assertThat(Differ.generate1(filePath1, filePath2, "plain"))
+        assertThat(Differ.generate(filePath1, filePath2, "plain"))
                 .isEqualTo(resultPlain);
         // Json and Yaml to json
-        assertThat(Differ.generate1(filePath1, filePath2, "json"))
+        assertThat(Differ.generate(filePath1, filePath2, "json"))
                 .isEqualTo(resultJson);
     }
 }
