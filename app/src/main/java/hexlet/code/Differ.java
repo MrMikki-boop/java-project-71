@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Differ {
-    public static String generateAndFormat(String filepath1, String filepath2, String format) throws Exception {
+    public static String generate(String filepath1, String filepath2, String format) throws Exception {
         Path absPath1 = Paths.get(filepath1).toAbsolutePath().normalize();
         Path absPath2 = Paths.get(filepath2).toAbsolutePath().normalize();
         String content1 = Files.readString(absPath1);
@@ -20,8 +20,8 @@ public class Differ {
         return Formatter.chooseFormat(difference, format);
     }
 
-    public static String generateAndFormat(String filepath1, String filepath2) throws Exception {
+    public static String generate(String filepath1, String filepath2) throws Exception {
         String format = "stylish";
-        return generateAndFormat(filepath1, filepath2, format);
+        return generate(filepath1, filepath2, format);
     }
 }
