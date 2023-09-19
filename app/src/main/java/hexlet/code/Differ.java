@@ -17,7 +17,7 @@ public class Differ {
         Map<String, Object> parsedData2 = Parser.makeParsing(filepath2, content2);
 
         List<Map<String, Object>> difference = Tree.makeDifference(parsedData1, parsedData2);
-        return Formatter.chooseFormat(difference, format);
+        return Formatter.formatAndOutput(difference, format);
     }
 
     public static String generate(String filepath1, String filepath2) throws Exception {

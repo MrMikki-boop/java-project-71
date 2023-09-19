@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Formatter {
-    public static String chooseFormat(List<Map<String, Object>> difference, String format)
+    public static String formatAndOutput(List<Map<String, Object>> difference, String format)
             throws Exception {
         return switch (format) {
             case "stylish" -> Stylish.makeStylish(difference);
