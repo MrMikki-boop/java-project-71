@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class Parser {
     public static Map<String, Object> makeParsing(String format, String content) throws Exception {
-        Map map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         ObjectMapper mapper;
         if (format.contains(".json")) {
             mapper = new ObjectMapper();
