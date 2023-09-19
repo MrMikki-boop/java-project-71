@@ -19,22 +19,22 @@ public class Plain {
                 result.append("Property '")
                         .append(element.get("key"))
                         .append("' was added with value: ")
-                        .append(checkValue(element.get("newValue")))
+                        .append(getTextRepresentation(element.get("newValue")))
                         .append(newLine);
             } else if (element.get("status").equals("changed")) {
                 result.append("Property '")
                         .append(element.get("key"))
                         .append("' was updated. From ")
-                        .append(checkValue(element.get("oldValue")))
+                        .append(getTextRepresentation(element.get("oldValue")))
                         .append(" to ")
-                        .append(checkValue(element.get("newValue")))
+                        .append(getTextRepresentation(element.get("newValue")))
                         .append(newLine);
             }
         }
         return result.toString().trim();
     }
 
-    public static String checkValue(Object value) {
+    public static String getTextRepresentation(Object value) {
         if (value instanceof Map || value instanceof List) {
             return "[complex value]";
         } else if (value == null) {
@@ -46,4 +46,3 @@ public class Plain {
         }
     }
 }
-
