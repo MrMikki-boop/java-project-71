@@ -20,7 +20,7 @@ test:
 		./gradlew test
 
 lint:
-	@./gradlew checkstyleMain checkstyleTest
+	./gradlew checkstyleMain checkstyleTest
 
 last: # Last version plugin
 	./gradlew useLatestVersions
