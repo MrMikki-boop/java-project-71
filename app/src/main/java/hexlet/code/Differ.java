@@ -2,7 +2,6 @@ package hexlet.code;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -21,17 +20,15 @@ public class Differ {
     }
 
     public static Map<String, Object> read(String filePath) throws Exception {
-        var normalizePath = normalizePath(filePath);
-        var type = getFormat(filePath);
-        var content = Files.readString(normalizePath);
+        var type = getDataFormat(filePath);
+        var content = Files.readString(Path.of(filePath).toAbsolutePath().normalize());
         return Parser.makeParsing(content, type);
     }
 
-    private static Path normalizePath(String path) {
-        return Paths.get(path).toAbsolutePath().normalize();
-    }
-
-    private static String getFormat(String filePath) {
-        return filePath.substring(filePath.lastIndexOf('.') + 1).toLowerCase();
+    private static String getDataFormat(String filePath) {
+        int index = filePath.lastIndexOf('.');
+        return index > 0
+                ? filePath.substring(index + 1)
+                : "";
     }
 }
