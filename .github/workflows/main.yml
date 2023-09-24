@@ -17,7 +17,10 @@ jobs:
           distribution: 'temurin'
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2
+      - name: Build with Gradle
+        uses: make -C app lint
         with:
+          gradle-version: 8.3
           arguments: build
           build-root-directory: app
 
