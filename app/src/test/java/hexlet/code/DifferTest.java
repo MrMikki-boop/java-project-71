@@ -17,7 +17,6 @@ public class DifferTest {
     private static String resultJson;
 
 
-
     public static final String FILE1_JSON_FILEPATH1 =
             "src/test/resources/fixtures/file1.json";
     public static final String FILE2_JSON_FILEPATH2 =
