@@ -9,7 +9,6 @@ import java.util.concurrent.Callable;
 
 @Command(name = "gendiff", mixinStandardHelpOptions = true, version = "checksum 1.0",
         description = "Compares two configuration files and shows a difference.")
-
 class App implements Callable<Integer> {
 
     @Parameters(index = "0", description = "path to first file", paramLabel = "filepath1")

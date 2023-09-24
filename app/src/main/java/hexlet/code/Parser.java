@@ -11,7 +11,8 @@ public class Parser {
 
     public static TreeMap<String, Object> makeParsing(String content, String type) throws Exception {
         ObjectMapper objectmapper = chooseType(type);
-        return objectmapper.readValue(content, new TypeReference<>() { });
+        return objectmapper.readValue(content, new TypeReference<>() {
+        });
     }
 
     public static ObjectMapper chooseType(String type) throws Exception {
