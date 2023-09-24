@@ -6,22 +6,33 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
+
 public class Differ {
-    public static String generate(String filepath1, String filepath2, String format) throws Exception {
-        Path absPath1 = Paths.get(filepath1).toAbsolutePath().normalize();
-        Path absPath2 = Paths.get(filepath2).toAbsolutePath().normalize();
-        String content1 = Files.readString(absPath1);
-        String content2 = Files.readString(absPath2);
-
-        Map<String, Object> parsedData1 = Parser.makeParsing(filepath1, content1);
-        Map<String, Object> parsedData2 = Parser.makeParsing(filepath2, content2);
-
-        List<Map<String, Object>> difference = Tree.makeDifference(parsedData1, parsedData2);
-        return Formatter.formatAndOutput(difference, format);
-    }
 
     public static String generate(String filepath1, String filepath2) throws Exception {
-        String format = "stylish";
-        return generate(filepath1, filepath2, format);
+        return generate(filepath1, filepath2, "stylish");
     }
+
+    public static String generate(String filepath1, String filepath2, String format) throws Exception {
+        Map<String, Object> data1 = read(filepath1);
+        Map<String, Object> data2 = read(filepath2);
+        List<Map<String, Object>> comparisonResult = Tree.makeDifference(data1, data2);
+        return Formatter.formatAndOutput(comparisonResult, format);
+    }
+
+    public static Map<String, Object> read(String filePath) throws Exception {
+        var normalizePath = normalizePath(filePath);
+        var type = getFormat(filePath);
+        var content = Files.readString(normalizePath);
+        return Parser.makeParsing(content, type);
+    }
+
+    private static Path normalizePath(String path) {
+        return Paths.get(path).toAbsolutePath().normalize();
+    }
+
+    private static String getFormat(String filePath) {
+        return filePath.substring(filePath.lastIndexOf('.') + 1).toLowerCase();
+    }
+
 }

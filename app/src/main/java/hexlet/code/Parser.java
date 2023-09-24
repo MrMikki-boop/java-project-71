@@ -1,21 +1,25 @@
 package hexlet.code;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.TreeMap;
+
 
 public class Parser {
-    public static Map<String, Object> makeParsing(String format, String content) throws Exception {
-        Map<String, Object> map = new HashMap<>();
-        ObjectMapper mapper;
-        if (format.contains(".json")) {
-            mapper = new ObjectMapper();
-            map = mapper.readValue(content, Map.class);
-        } else if (format.contains(".yaml") || format.contains(".yml")) {
-            mapper = new ObjectMapper(new YAMLFactory());
-            map = mapper.readValue(content, Map.class);
-        }
-        return map;
+
+    public static TreeMap<String, Object> makeParsing(String content, String type) throws Exception {
+        ObjectMapper objectmapper = chooseType(type);
+        return objectmapper.readValue(content, new TypeReference<>() { });
+    }
+
+    public static ObjectMapper chooseType(String type) throws Exception {
+        return switch (type) {
+            case "json" -> new ObjectMapper();
+            case "yaml" -> new ObjectMapper(new YAMLFactory());
+            case "yml" -> new ObjectMapper(new YAMLFactory());
+            default -> throw new Exception("Format is unknown " + type);
+        };
     }
 }
