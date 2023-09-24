@@ -34,5 +34,4 @@ public class Differ {
     private static String getFormat(String filePath) {
         return filePath.substring(filePath.lastIndexOf('.') + 1).toLowerCase();
     }
-
 }
