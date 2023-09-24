@@ -16,7 +16,7 @@ jobs:
           java-version: '20'
           distribution: 'temurin'
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@v3
+        uses: gradle/gradle-build-action@v2
         with:
           arguments: build
           build-root-directory: app
@@ -27,7 +27,7 @@ jobs:
       # - run: make -C app lint
 
       - name: Publish code coverage
-        uses: paambaati/codeclimate-action@v3.0.0
+        uses: paambaati/codeclimate-action@v5.0.0
         env:
           CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
           JACOCO_SOURCE_PATH: app/src/main/java
