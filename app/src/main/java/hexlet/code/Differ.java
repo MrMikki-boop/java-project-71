@@ -13,8 +13,8 @@ public class Differ {
         String content1 = Files.readString(absPath1);
         String content2 = Files.readString(absPath2);
 
-        Map<String, Object> parsedData1 = Parser.makeParsing(filepath1, content1);
-        Map<String, Object> parsedData2 = Parser.makeParsing(filepath2, content2);
+        Map<String, Object> parsedData1 = Parser.makeParsing(content1);
+        Map<String, Object> parsedData2 = Parser.makeParsing(content2);
 
         List<Map<String, Object>> difference = Tree.makeDifference(parsedData1, parsedData2);
         return Formatter.formatAndOutput(difference, format);

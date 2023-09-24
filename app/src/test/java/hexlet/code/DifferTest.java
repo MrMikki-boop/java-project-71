@@ -37,7 +37,7 @@ class DifferTest {
         String filePath2 = getFixturePath("file2." + format).toString();
 
         // Json and Yaml to stylish as default
-        assertThat(Differ.generate(filePath1, filePath2, "stylish")) // Добавляем формат по умолчанию "stylish"
+        assertThat(Differ.generate(filePath1, filePath2)) // Добавляем формат по умолчанию "stylish"
                 .isEqualTo(resultStylish);
         // Json and Yaml to stylish
         assertThat(Differ.generate(filePath1, filePath2, "stylish"))
