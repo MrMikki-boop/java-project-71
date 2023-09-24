@@ -15,30 +15,38 @@ public class Tree {
         keys.addAll(mapB.keySet());
 
         for (String key : keys) {
-            Map<String, Object> diffMap = new HashMap<>();
-            var valueA = mapA.get(key);
-            var valueB = mapB.get(key);
+            list.add(getDifferenceMap(key, mapA, mapB));
+        }
 
-            diffMap.put("key", key);
+        return list;
+    }
 
-            if (Objects.equals(valueA, valueB)) {
-                diffMap.put("status", "unchanged");
-                diffMap.put("oldValue", valueA);
-            } else if (mapA.containsKey(key)) {
+    private static Map<String, Object> getDifferenceMap(String key,
+                                                        Map<String, Object> mapA, Map<String, Object> mapB) {
+        Map<String, Object> diffMap = new HashMap<>();
+        var valueA = mapA.get(key);
+        var valueB = mapB.get(key);
+
+        diffMap.put("key", key);
+
+        if (Objects.equals(valueA, valueB)) {
+            diffMap.put("status", "unchanged");
+            diffMap.put("oldValue", valueA);
+        } else {
+            if (mapA.containsKey(key)) {
                 diffMap.put("status", "deleted");
                 diffMap.put("oldValue", valueA);
-            } else if (mapB.containsKey(key)) {
+            }
+            if (mapB.containsKey(key)) {
                 diffMap.put("status", "added");
                 diffMap.put("newValue", valueB);
-            } else if (mapA.containsKey(key) && mapB.containsKey(key)) {
+            }
+            if (mapA.containsKey(key) && mapB.containsKey(key)) {
                 diffMap.put("status", "changed");
                 diffMap.put("oldValue", valueA);
                 diffMap.put("newValue", valueB);
             }
-
-            list.add(diffMap);
         }
-
-        return list;
+        return diffMap;
     }
 }
