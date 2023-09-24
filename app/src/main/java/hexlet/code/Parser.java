@@ -6,24 +6,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Parser {
-    public static Map<String, Object> makeParsing(String content) throws Exception {
-        String format = getDataFormat(content);
+    public static Map<String, Object> makeParsing(String format, String content) throws Exception {
         Map<String, Object> map = new HashMap<>();
         ObjectMapper mapper;
-        if (format.equals("json")) {
+        if (format.contains(".json")) {
             mapper = new ObjectMapper();
             map = mapper.readValue(content, Map.class);
-        } else if (format.equals("yaml") || format.equals("yml")) {
+        } else if (format.contains(".yaml") || format.contains(".yml")) {
             mapper = new ObjectMapper(new YAMLFactory());
             map = mapper.readValue(content, Map.class);
         }
         return map;
-    }
-
-    private static String getDataFormat(String filePath) {
-        int index = filePath.lastIndexOf('.');
-        return index > 0
-                ? filePath.substring(index + 1)
-                : "";
     }
 }
