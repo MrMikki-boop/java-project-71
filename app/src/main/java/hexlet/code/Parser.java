@@ -18,8 +18,7 @@ public class Parser {
     public static ObjectMapper chooseType(String type) throws Exception {
         return switch (type) {
             case "json" -> new ObjectMapper();
-            case "yaml" -> new ObjectMapper(new YAMLFactory());
-            case "yml" -> new ObjectMapper(new YAMLFactory());
+            case "yaml", "yml" -> new ObjectMapper(new YAMLFactory());
             default -> throw new Exception("Format is unknown " + type);
         };
     }
