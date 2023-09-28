@@ -6,15 +6,20 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class DifferTest {
+    private static final String FIXTURES_FOLDER = "src/test/resources/fixtures/";
     private static String resultStylish;
     private static String resultPlain;
     private static String resultJson;
+    private static final Logger LOGGER = LoggerFactory.getLogger(DifferTest.class);
 
     @BeforeAll
     public static void beforeAll() {
@@ -28,14 +33,13 @@ public class DifferTest {
             Path filePath = getFixturePath(fileName);
             return Files.readString(filePath).trim();
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error reading fixture file: " + fileName, e);
+            LOGGER.error("Error reading fixture file: {}", fileName, e);
+            throw new UncheckedIOException("Error reading fixture file: " + fileName, e);
         }
     }
 
     private static Path getFixturePath(String fileName) {
-        return Paths.get("src", "test", "resources", "fixtures", fileName)
-                .toAbsolutePath().normalize();
+        return Paths.get(FIXTURES_FOLDER, fileName).toAbsolutePath().normalize();
     }
 
     @ParameterizedTest
@@ -46,8 +50,11 @@ public class DifferTest {
 
         // Тестируем вызов метода с каждым из форматтеров, а также вызов с форматтером по умолчанию
         Assertions.assertThat(Differ.generate(filePath1, filePath2)).isEqualToIgnoringWhitespace(resultStylish);
-        Assertions.assertThat(Differ.generate(filePath1, filePath2, "stylish")).isEqualToIgnoringWhitespace(resultStylish);
-        Assertions.assertThat(Differ.generate(filePath1, filePath2, "plain")).isEqualToIgnoringWhitespace(resultPlain);
-        Assertions.assertThat(Differ.generate(filePath1, filePath2, "json")).isEqualToIgnoringWhitespace(resultJson);
+        Assertions.assertThat(Differ.generate(filePath1, filePath2, "stylish"))
+                .isEqualToIgnoringWhitespace(resultStylish);
+        Assertions.assertThat(Differ.generate(filePath1, filePath2, "plain"))
+                .isEqualToIgnoringWhitespace(resultPlain);
+        Assertions.assertThat(Differ.generate(filePath1, filePath2, "json"))
+                .isEqualToIgnoringWhitespace(resultJson);
     }
 }
