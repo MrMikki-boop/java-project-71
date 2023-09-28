@@ -41,7 +41,12 @@ public class DifferTest {
     private static Path getFixturePath(String fileName) {
         return Paths.get(FIXTURES_FOLDER, fileName).toAbsolutePath().normalize();
     }
-
+    /**
+     * Генерирует тесты для сравнения файлов в разных форматах.
+     *
+     * @param format Формат файлов (json или yml).
+     * @throws Exception В случае ошибки.
+     */
     @ParameterizedTest
     @ValueSource(strings = {"json", "yml"})
     public void generateTest(String format) throws Exception {
