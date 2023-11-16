@@ -15,6 +15,12 @@ jobs:
         with:
           java-version: '20'
           distribution: 'temurin'
+
+      - run: chmod +x app/gradlew
+      - run: make -C app build
+      - run: make -C app test
+      - run: make -C app lint
+
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2
         with:
