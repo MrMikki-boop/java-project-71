@@ -4,7 +4,7 @@
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/e405cb516ba1e2a051a4/maintainability)](https://codeclimate.com/github/MrMikki-boop/java-project-712/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/e405cb516ba1e2a051a4/test_coverage)](https://codeclimate.com/github/MrMikki-boop/java-project-712/test_coverage)
-# Differ (Education project)
+# Difference Finder
 
 ### Description
 It's a primitive application that compares two *flat* jsons and returns their difference.
